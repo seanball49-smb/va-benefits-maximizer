@@ -184,6 +184,24 @@ function AssessmentPage() {
 
     setMessage("Assessment saved successfully");
     setResults(calculated);
+    fetch("/api/send-lead-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          first_name: form.first_name,
+          email: form.email,
+          state: form.state,
+          service_branch: form.service_branch,
+          disability_rating: Number(form.disability_rating),
+          gi_bill_percent: Number(form.gi_bill_percent),
+          dependents: Number(form.dependents),
+          employed: form.employed,
+          interested_in_vre: form.interested_in_vre,
+          interested_in_ssdi: form.interested_in_ssdi,
+        }),
+      }).catch((err) => console.error("Lead email failed:", err));
   };
 
   const downloadPDF = async () => {
