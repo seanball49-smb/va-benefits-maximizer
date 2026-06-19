@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import jsPDF from "jspdf";
@@ -18,39 +18,15 @@ const vaMonthlyBase = {
   100: 3938.57,
 };
 
-const stateBenefits = {
-  california: [
-    "CalVet College Fee Waiver",
-    "Disabled Veterans Property Tax Exemption",
-    "California Disabled Veteran License Plates",
-  ],
-  texas: [
-    "Hazlewood Act Education Benefit",
-    "Disabled Veteran Property Tax Exemption",
-    "Texas DV Plates and Parking Benefits",
-  ],
-  florida: [
-    "Florida Homestead Property Tax Benefits",
-    "Disabled Veteran License Plate Benefits",
-    "State Park Fee Discounts",
-  ],
-  arizona: [
-    "Arizona Property Tax Exemption",
-    "Arizona Veteran Tuition Benefits",
-    "Disabled Veteran Plate Benefits",
-  ],
-  nevada: [
-    "Nevada Veterans Tax Exemption",
-    "Disabled Veteran License Plate Benefits",
-    "Nevada Veterans Services Assistance",
-  ],
-};
-
 function currency(value) {
   return value.toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
   });
+}
+
+function normalizeState(value) {
+  return value.trim().toLowerCase();
 }
 
 function AssessmentPage() {
@@ -71,12 +47,30 @@ function AssessmentPage() {
 
   const [message, setMessage] = useState("");
   const [results, setResults] = useState(null);
+  const [stateBenefitRows, setStateBenefitRows] = useState([]);
 
-  const calculateResults = () => {
+  const fetchStateBenefits = async (stateName) => {
+    const cleanedState = stateName.trim();
+
+    if (!cleanedState) return [];
+
+    const { data, error } = await supabase
+      .from("state_benefits")
+      .select("benefit_name, description, link")
+      .ilike("state", cleanedState);
+
+    if (error) {
+      console.error("State benefits error:", error);
+      return [];
+    }
+
+    return data || [];
+  };
+
+  const calculateResults = (benefitRows) => {
     const rating = Number(form.disability_rating);
     const giBill = Number(form.gi_bill_percent);
     const dependents = Number(form.dependents);
-    const stateKey = form.state.trim().toLowerCase();
 
     const roundedRating = Math.min(
       100,
@@ -95,7 +89,7 @@ function AssessmentPage() {
     if (roundedRating >= 30 && dependents > 0) score += 15;
     if (giBill > 0) score += 15;
     if (form.interested_in_vre) score += 20;
-    if (stateBenefits[stateKey]) score += 15;
+    if (benefitRows.length > 0) score += 15;
     if (form.interested_in_ssdi && !form.employed) score += 15;
     if (form.interested_in_ssdi && form.employed) score -= 10;
 
@@ -122,7 +116,7 @@ function AssessmentPage() {
         },
         {
           name: "State Veteran Benefits",
-          priority: stateBenefits[stateKey] ? "High" : "Review",
+          priority: benefitRows.length > 0 ? "High" : "Review",
         },
         {
           name: "GI Bill",
@@ -137,9 +131,6 @@ function AssessmentPage() {
               ? "Review"
               : "Low",
         },
-      ],
-      stateBenefits: stateBenefits[stateKey] || [
-        "State-specific benefits not loaded yet. Check your state veterans affairs website.",
       ],
       disabilityPriority:
         roundedRating >= 70 ? "High" : roundedRating >= 30 ? "Medium" : "Low",
@@ -159,7 +150,12 @@ function AssessmentPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const calculated = calculateResults();
+    setMessage("Generating report...");
+
+    const benefits = await fetchStateBenefits(form.state);
+    setStateBenefitRows(benefits);
+
+    const calculated = calculateResults(benefits);
 
     const { error } = await supabase.from("assessments").insert([
       {
@@ -184,24 +180,6 @@ function AssessmentPage() {
 
     setMessage("Assessment saved successfully");
     setResults(calculated);
-    fetch("/api/send-lead-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          first_name: form.first_name,
-          email: form.email,
-          state: form.state,
-          service_branch: form.service_branch,
-          disability_rating: Number(form.disability_rating),
-          gi_bill_percent: Number(form.gi_bill_percent),
-          dependents: Number(form.dependents),
-          employed: form.employed,
-          interested_in_vre: form.interested_in_vre,
-          interested_in_ssdi: form.interested_in_ssdi,
-        }),
-      }).catch((err) => console.error("Lead email failed:", err));
   };
 
   const downloadPDF = async () => {
@@ -382,8 +360,8 @@ function AssessmentPage() {
                 <h2>Your report will appear here</h2>
                 <p>
                   After submission, this area will show your opportunity score,
-                  estimated compensation, ranked benefit areas, and recommended
-                  next steps.
+                  estimated compensation, ranked benefit areas, state benefits,
+                  and recommended next steps.
                 </p>
               </div>
             )}
@@ -452,11 +430,33 @@ function AssessmentPage() {
                       <strong>State entered:</strong>{" "}
                       {form.state || "Not provided"}
                     </p>
-                    <ul>
-                      {results.stateBenefits.map((benefit) => (
-                        <li key={benefit}>{benefit}</li>
-                      ))}
-                    </ul>
+
+                    {stateBenefitRows.length > 0 ? (
+                      <ul>
+                        {stateBenefitRows.map((benefit) => (
+                          <li key={benefit.benefit_name}>
+                            <strong>{benefit.benefit_name}</strong>
+                            {benefit.description && (
+                              <p>{benefit.description}</p>
+                            )}
+                            {benefit.link && (
+                              <a
+                                href={benefit.link}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Learn more
+                              </a>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>
+                        State-specific benefits are not loaded for this state
+                        yet. Check your state veterans affairs website.
+                      </p>
+                    )}
                   </div>
 
                   <div className="feature-card">
