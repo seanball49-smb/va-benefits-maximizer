@@ -4,6 +4,53 @@
 
 body {
   margin: 0;
+  color: #0f172a;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+label,
+p,
+li,
+small,
+span,
+div {
+  color: inherit;
+}
+
+main,
+section,
+form,
+input,
+select,
+textarea {
+  color: #0f172a;
+}
+
+input,
+select,
+textarea {
+  color: #0f172a !important;
+  background: #ffffff !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+input::placeholder {
+  color: #64748b !important;
+  opacity: 1;
+}
+
+select option {
+  color: #0f172a;
+  background: #ffffff;
+}
+
+button {
+  color: inherit;
 }
 
 @media (max-width: 900px) {

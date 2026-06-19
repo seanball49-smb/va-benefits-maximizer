@@ -392,7 +392,7 @@ function App() {
       color: "#123f73",
     },
     note: {
-      color: "#64748b",
+      color: "##1e293b",
       fontSize: "14px",
       lineHeight: 1.55,
     },
