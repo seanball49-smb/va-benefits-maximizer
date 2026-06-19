@@ -36,8 +36,8 @@ function AssessmentPage() {
     email: "",
     state: "",
     service_branch: "",
-    disability_rating: "",
-    gi_bill_percent: "",
+    disability_rating: 0,
+    gi_bill_percent: 0,
     dependents: "",
     employed: false,
     interested_in_vre: false,
@@ -138,24 +138,13 @@ function AssessmentPage() {
       ],
       disabilityPriority:
         roundedRating >= 70 ? "High" : roundedRating >= 30 ? "Medium" : "Low",
-      dependentPriority:
-        roundedRating >= 30 && dependents > 0 ? "High" : "Low",
-      giBillPriority: giBill >= 80 ? "High" : giBill > 0 ? "Medium" : "Low",
-      vrePriority: form.interested_in_vre ? "High" : "Medium",
-      ssdiPriority:
-        form.interested_in_ssdi && form.employed
-          ? "Caution"
-          : form.interested_in_ssdi
-          ? "Review"
-          : "Low",
     };
   };
 
   const canContinue = () => {
     if (step === 1) return form.first_name && form.email;
     if (step === 2) return form.state && form.service_branch;
-    if (step === 3) return form.disability_rating !== "" && form.dependents !== "";
-    if (step === 4) return form.gi_bill_percent !== "";
+    if (step === 3) return form.dependents !== "";
     return true;
   };
 
@@ -176,11 +165,6 @@ function AssessmentPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!canContinue()) {
-      setMessage("Please complete the required fields before generating your report.");
-      return;
-    }
 
     setMessage("Generating report...");
 
@@ -262,7 +246,9 @@ function AssessmentPage() {
 
           <div className="app-hero-card">
             <span>Current step</span>
-            <strong>{step} of {totalSteps}</strong>
+            <strong>
+              {step} of {totalSteps}
+            </strong>
             <div className="progress-track">
               <div
                 className="progress-fill"
@@ -292,7 +278,9 @@ function AssessmentPage() {
               {step === 1 && (
                 <div className="wizard-step">
                   <h2>Basic information</h2>
-                  <p>We’ll use this to personalize your report and save the lead.</p>
+                  <p>
+                    We’ll use this to personalize your report and save the lead.
+                  </p>
 
                   <label>First Name</label>
                   <input
@@ -315,7 +303,10 @@ function AssessmentPage() {
               {step === 2 && (
                 <div className="wizard-step">
                   <h2>Service profile</h2>
-                  <p>This helps match your report to state and service-related benefits.</p>
+                  <p>
+                    This helps match your report to state and service-related
+                    benefits.
+                  </p>
 
                   <label>State</label>
                   <input
@@ -326,18 +317,29 @@ function AssessmentPage() {
                   />
 
                   <label>Service Branch</label>
-                  <select
-                    value={form.service_branch}
-                    onChange={(e) => updateForm("service_branch", e.target.value)}
-                  >
-                    <option value="">Select Branch</option>
-                    <option>Air Force</option>
-                    <option>Army</option>
-                    <option>Navy</option>
-                    <option>Marine Corps</option>
-                    <option>Coast Guard</option>
-                    <option>Space Force</option>
-                  </select>
+                  <div className="option-grid">
+                    {[
+                      "Air Force",
+                      "Army",
+                      "Navy",
+                      "Marine Corps",
+                      "Coast Guard",
+                      "Space Force",
+                    ].map((branch) => (
+                      <button
+                        key={branch}
+                        type="button"
+                        className={
+                          form.service_branch === branch
+                            ? "option-card selected"
+                            : "option-card"
+                        }
+                        onClick={() => updateForm("service_branch", branch)}
+                      >
+                        {branch}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -346,16 +348,30 @@ function AssessmentPage() {
                   <h2>VA disability profile</h2>
                   <p>Enter your current combined rating and dependent count.</p>
 
-                  <label>VA Disability Rating (%)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="10"
-                    value={form.disability_rating}
-                    onChange={(e) => updateForm("disability_rating", e.target.value)}
-                    placeholder="80"
-                  />
+                  <label>VA Disability Rating</label>
+                  <div className="slider-card">
+                    <div className="slider-value">
+                      {form.disability_rating || 0}%
+                    </div>
+
+                    <input
+                      className="range-input"
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="10"
+                      value={form.disability_rating || 0}
+                      onChange={(e) =>
+                        updateForm("disability_rating", e.target.value)
+                      }
+                    />
+
+                    <div className="range-labels">
+                      <span>0%</span>
+                      <span>50%</span>
+                      <span>100%</span>
+                    </div>
+                  </div>
 
                   <label>Number of Dependents</label>
                   <input
@@ -371,51 +387,95 @@ function AssessmentPage() {
               {step === 4 && (
                 <div className="wizard-step">
                   <h2>Education benefits</h2>
-                  <p>Compare GI Bill usage against VR&E before committing benefits.</p>
+                  <p>
+                    Compare GI Bill usage against VR&E before committing
+                    benefits.
+                  </p>
 
-                  <label>GI Bill Percentage</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={form.gi_bill_percent}
-                    onChange={(e) => updateForm("gi_bill_percent", e.target.value)}
-                    placeholder="90"
-                  />
+                  <label>GI Bill Eligibility</label>
+                  <div className="slider-card">
+                    <div className="slider-value">
+                      {form.gi_bill_percent || 0}%
+                    </div>
 
-                  <label className="checkbox-line">
                     <input
-                      type="checkbox"
-                      checked={form.interested_in_vre}
-                      onChange={(e) => updateForm("interested_in_vre", e.target.checked)}
+                      className="range-input"
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="1"
+                      value={form.gi_bill_percent || 0}
+                      onChange={(e) =>
+                        updateForm("gi_bill_percent", e.target.value)
+                      }
                     />
-                    Interested in VR&E
-                  </label>
+
+                    <div className="range-labels">
+                      <span>0%</span>
+                      <span>50%</span>
+                      <span>100%</span>
+                    </div>
+                  </div>
+
+                  <div className="toggle-stack">
+                    <button
+                      type="button"
+                      className={
+                        form.interested_in_vre
+                          ? "toggle-card selected"
+                          : "toggle-card"
+                      }
+                      onClick={() =>
+                        updateForm(
+                          "interested_in_vre",
+                          !form.interested_in_vre
+                        )
+                      }
+                    >
+                      <span>Interested in VR&E</span>
+                      <strong>{form.interested_in_vre ? "Yes" : "No"}</strong>
+                    </button>
+                  </div>
                 </div>
               )}
 
               {step === 5 && (
                 <div className="wizard-step">
                   <h2>Work and SSDI considerations</h2>
-                  <p>This helps flag whether SSDI should be reviewed carefully.</p>
+                  <p>
+                    This helps flag whether SSDI should be reviewed carefully.
+                  </p>
 
-                  <label className="checkbox-line">
-                    <input
-                      type="checkbox"
-                      checked={form.employed}
-                      onChange={(e) => updateForm("employed", e.target.checked)}
-                    />
-                    Currently Employed
-                  </label>
+                  <div className="toggle-stack">
+                    <button
+                      type="button"
+                      className={
+                        form.employed ? "toggle-card selected" : "toggle-card"
+                      }
+                      onClick={() => updateForm("employed", !form.employed)}
+                    >
+                      <span>Currently Employed</span>
+                      <strong>{form.employed ? "Yes" : "No"}</strong>
+                    </button>
 
-                  <label className="checkbox-line">
-                    <input
-                      type="checkbox"
-                      checked={form.interested_in_ssdi}
-                      onChange={(e) => updateForm("interested_in_ssdi", e.target.checked)}
-                    />
-                    Interested in SSDI
-                  </label>
+                    <button
+                      type="button"
+                      className={
+                        form.interested_in_ssdi
+                          ? "toggle-card selected"
+                          : "toggle-card"
+                      }
+                      onClick={() =>
+                        updateForm(
+                          "interested_in_ssdi",
+                          !form.interested_in_ssdi
+                        )
+                      }
+                    >
+                      <span>Interested in SSDI</span>
+                      <strong>{form.interested_in_ssdi ? "Yes" : "No"}</strong>
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -423,13 +483,21 @@ function AssessmentPage() {
 
               <div className="wizard-actions">
                 {step > 1 && (
-                  <button type="button" className="btn btn-secondary" onClick={previousStep}>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={previousStep}
+                  >
                     Back
                   </button>
                 )}
 
                 {step < totalSteps && (
-                  <button type="button" className="btn btn-primary" onClick={nextStep}>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={nextStep}
+                  >
                     Continue
                   </button>
                 )}
@@ -520,7 +588,8 @@ function AssessmentPage() {
                   <div className="report-section-card">
                     <h3>State-Specific Benefits</h3>
                     <p>
-                      <strong>State entered:</strong> {form.state || "Not provided"}
+                      <strong>State entered:</strong>{" "}
+                      {form.state || "Not provided"}
                     </p>
 
                     {stateBenefitRows.length > 0 ? (
@@ -528,9 +597,15 @@ function AssessmentPage() {
                         {stateBenefitRows.map((benefit) => (
                           <div key={benefit.benefit_name}>
                             <h4>{benefit.benefit_name}</h4>
-                            {benefit.description && <p>{benefit.description}</p>}
+                            {benefit.description && (
+                              <p>{benefit.description}</p>
+                            )}
                             {benefit.link && (
-                              <a href={benefit.link} target="_blank" rel="noreferrer">
+                              <a
+                                href={benefit.link}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
                                 Learn more
                               </a>
                             )}
@@ -539,8 +614,8 @@ function AssessmentPage() {
                       </div>
                     ) : (
                       <p>
-                        State-specific benefits are not loaded for this state yet.
-                        Check your state veterans affairs website.
+                        State-specific benefits are not loaded for this state
+                        yet. Check your state veterans affairs website.
                       </p>
                     )}
                   </div>
@@ -549,11 +624,21 @@ function AssessmentPage() {
                     <h3>Recommended Action Plan</h3>
                     <ol>
                       <li>Verify your current combined rating on VA.gov.</li>
-                      <li>Confirm all dependents are added to your VA profile.</li>
-                      <li>Compare VR&E before using more GI Bill entitlement.</li>
+                      <li>
+                        Confirm all dependents are added to your VA profile.
+                      </li>
+                      <li>
+                        Compare VR&E before using more GI Bill entitlement.
+                      </li>
                       <li>Review state-specific veteran benefits.</li>
-                      <li>Download your benefits letters and rating decision letters.</li>
-                      <li>Talk to a VSO or accredited representative before complex claims.</li>
+                      <li>
+                        Download your benefits letters and rating decision
+                        letters.
+                      </li>
+                      <li>
+                        Talk to a VSO or accredited representative before
+                        complex claims.
+                      </li>
                     </ol>
                   </div>
                 </div>
