@@ -688,3 +688,64 @@ a {
     max-width: 1560px;
   }
 }
+/* Force true desktop layout */
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 100%;
+  overflow-x: hidden;
+}
+
+.site-page {
+  width: 100%;
+}
+
+@media (min-width: 1100px) {
+  .modern-hero {
+    width: 100%;
+    padding: 28px 80px 80px;
+  }
+
+  .modern-nav,
+  .hero-shell,
+  .section,
+  .modern-footer {
+    width: 100%;
+    max-width: 1720px;
+  }
+
+  .hero-shell {
+    min-height: 680px;
+    grid-template-columns: minmax(640px, 1fr) minmax(560px, 680px);
+    gap: 96px;
+    justify-content: space-between;
+  }
+
+  .hero-copy {
+    text-align: left;
+  }
+
+  .hero-copy h1 {
+    max-width: 760px;
+    font-size: clamp(64px, 5.4vw, 92px);
+  }
+
+  .hero-copy p {
+    max-width: 700px;
+  }
+
+  .hero-buttons {
+    justify-content: flex-start;
+  }
+
+  .hero-proof {
+    justify-content: flex-start;
+  }
+
+  .hero-dashboard {
+    width: 100%;
+    max-width: 680px;
+    justify-self: end;
+  }
+}
