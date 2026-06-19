@@ -27,6 +27,19 @@ function currency(value) {
   });
 }
 
+const states = [
+    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
+    "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
+    "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
+    "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
+    "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+    "New Hampshire", "New Jersey", "New Mexico", "New York",
+    "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
+    "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+    "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
+    "West Virginia", "Wisconsin", "Wyoming"
+  ];
+
 function AssessmentPage() {
   const reportRef = useRef(null);
   const [step, setStep] = useState(1);
@@ -309,12 +322,17 @@ function AssessmentPage() {
                   </p>
 
                   <label>State</label>
-                  <input
-                    type="text"
-                    value={form.state}
-                    onChange={(e) => updateForm("state", e.target.value)}
-                    placeholder="California"
-                  />
+<select
+  value={form.state}
+  onChange={(e) => updateForm("state", e.target.value)}
+>
+  <option value="">Select State</option>
+  {states.map((state) => (
+    <option key={state} value={state}>
+      {state}
+    </option>
+  ))}
+</select>
 
                   <label>Service Branch</label>
                   <div className="option-grid">
