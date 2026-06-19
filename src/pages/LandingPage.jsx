@@ -7,11 +7,8 @@ function LandingPage() {
 
   useEffect(() => {
     async function loadLeadCount() {
-      const { count } = await supabase
-        .from("assessments")
-        .select("*", { count: "exact", head: true });
-
-      setLeadCount(count || 0);
+      const { data } = await supabase.from("assessments").select("id");
+      setLeadCount(data?.length || 0);
     }
 
     loadLeadCount();
@@ -30,7 +27,9 @@ function LandingPage() {
         <section className="hero-content">
           <div>
             <p className="eyebrow">Veteran Benefits Planning Tool</p>
+
             <h1>Discover Veteran Benefits You May Be Missing</h1>
+
             <p className="hero-subtitle">
               Get a free personalized benefits assessment covering VA disability,
               GI Bill, VR&E, state programs, dependent benefits, and SSDI
@@ -39,8 +38,9 @@ function LandingPage() {
 
             <div className="hero-actions">
               <Link className="primary-btn" to="/app">
-                Get My Free Benefits Report
+                Start My Free Assessment
               </Link>
+
               <a className="secondary-btn" href="#sample-report">
                 View Sample Report
               </a>
@@ -50,6 +50,23 @@ function LandingPage() {
               <span>100% Free Assessment</span>
               <span>2-Minute Completion Time</span>
               <span>Personalized Benefits Report</span>
+            </div>
+
+            <div className="mini-proof">
+              <div>
+                <strong>Free</strong>
+                <span>No signup required</span>
+              </div>
+
+              <div>
+                <strong>2 Minutes</strong>
+                <span>Fast assessment</span>
+              </div>
+
+              <div>
+                <strong>Personalized</strong>
+                <span>Custom recommendations</span>
+              </div>
             </div>
           </div>
 
@@ -75,8 +92,22 @@ function LandingPage() {
 
           <div className="feature-card">
             <h3>State Benefits</h3>
-            <p>Identify state-level programs like tuition, DMV, and tax benefits.</p>
+            <p>
+              Identify state-level programs like tuition, DMV, and tax benefits.
+            </p>
           </div>
+        </section>
+
+        <section className="what-you-learn">
+          <h2>What You'll Learn</h2>
+
+          <ul>
+            <li>Estimated VA compensation opportunities</li>
+            <li>Potential dependent benefits</li>
+            <li>GI Bill and VR&E considerations</li>
+            <li>State-level veteran programs</li>
+            <li>Suggested next steps</li>
+          </ul>
         </section>
 
         <section id="sample-report" className="sample-report">
@@ -90,7 +121,9 @@ function LandingPage() {
 
             <div className="sample-card">
               <h3>Estimated Compensation</h3>
-              <p><strong>$2,297/month</strong></p>
+              <p>
+                <strong>$2,297/month</strong>
+              </p>
               <p>Educational estimate based on rating and dependents.</p>
             </div>
 

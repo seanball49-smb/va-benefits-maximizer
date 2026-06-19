@@ -380,3 +380,50 @@ button {
     grid-template-columns: 1fr;
   }
 }
+.mini-proof {
+  display: flex;
+  gap: 24px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.mini-proof div {
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-proof strong {
+  color: white;
+  font-size: 22px;
+}
+
+.mini-proof span {
+  color: #dbe7f5;
+  font-size: 13px;
+}
+
+.what-you-learn {
+  background: white;
+  border: 1px solid #dce5ef;
+  border-radius: 18px;
+  padding: 28px;
+  margin-top: 32px;
+  box-shadow: 0 10px 30px rgba(18, 63, 115, 0.08);
+}
+
+.what-you-learn h2 {
+  margin-top: 0;
+}
+
+.what-you-learn ul {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 24px;
+  padding-left: 20px;
+}
+
+@media (max-width: 900px) {
+  .what-you-learn ul {
+    grid-template-columns: 1fr;
+  }
+}
