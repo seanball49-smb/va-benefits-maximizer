@@ -647,3 +647,44 @@ a {
   list-style-position: inside;
   padding-left: 0;
 }
+/* Desktop width fix */
+@media (min-width: 1100px) {
+  .modern-nav,
+  .hero-shell,
+  .section,
+  .modern-footer {
+    max-width: 1440px;
+  }
+
+  .hero-shell {
+    grid-template-columns: minmax(0, 1.1fr) minmax(480px, 0.9fr);
+    gap: 72px;
+  }
+
+  .hero-copy h1 {
+    max-width: 820px;
+  }
+
+  .hero-copy p {
+    max-width: 760px;
+  }
+
+  .modern-hero {
+    padding-left: 56px;
+    padding-right: 56px;
+  }
+
+  .section {
+    padding-left: 56px;
+    padding-right: 56px;
+  }
+}
+
+@media (min-width: 1500px) {
+  .modern-nav,
+  .hero-shell,
+  .section,
+  .modern-footer {
+    max-width: 1560px;
+  }
+}
