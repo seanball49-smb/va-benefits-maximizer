@@ -1,0 +1,57 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  h1 {
+    font-size: 32px !important;
+  }
+
+  div[style*="grid-template-columns: 1.4fr 0.8fr"],
+  div[style*="grid-template-columns: 1fr 1fr"],
+  div[style*="grid-template-columns: repeat(3, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  header {
+    padding: 32px 18px !important;
+  }
+
+  main {
+    padding: 20px 16px 48px !important;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  h1 {
+    font-size: 28px !important;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  input,
+  select {
+    font-size: 16px !important;
+  }
+
+  div[style*="padding: 22px"] {
+    padding: 16px !important;
+  }
+
+  div[style*="width: 132px"] {
+    width: 110px !important;
+    height: 110px !important;
+    font-size: 28px !important;
+  }
+}
