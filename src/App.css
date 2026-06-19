@@ -332,3 +332,51 @@ button {
     grid-template-columns: 1fr;
   }
 }
+.trust-strip {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.trust-strip span {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  padding: 10px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.sample-report-grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 1fr;
+  gap: 18px;
+}
+
+.highlight-card {
+  background: linear-gradient(135deg, #0b1f3a, #123f73);
+  color: white;
+}
+
+.highlight-card h1,
+.highlight-card p {
+  color: white;
+}
+
+.highlight-card h1 {
+  font-size: 48px;
+  margin: 8px 0;
+}
+
+.bottom-cta {
+  display: inline-block;
+  margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+  .sample-report-grid {
+    grid-template-columns: 1fr;
+  }
+}

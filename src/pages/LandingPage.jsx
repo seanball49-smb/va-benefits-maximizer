@@ -1,6 +1,22 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 
 function LandingPage() {
+  const [leadCount, setLeadCount] = useState(0);
+
+  useEffect(() => {
+    async function loadLeadCount() {
+      const { count } = await supabase
+        .from("assessments")
+        .select("*", { count: "exact", head: true });
+
+      setLeadCount(count || 0);
+    }
+
+    loadLeadCount();
+  }, []);
+
   return (
     <div className="landing-page">
       <header className="landing-hero">
@@ -8,7 +24,6 @@ function LandingPage() {
           <div className="brand">VA Benefits Maximizer</div>
           <div className="nav-links">
             <Link to="/app">Start Assessment</Link>
-            <Link to="/admin">Admin</Link>
           </div>
         </nav>
 
@@ -24,18 +39,24 @@ function LandingPage() {
 
             <div className="hero-actions">
               <Link className="primary-btn" to="/app">
-                Start Free Assessment
+                Get My Free Benefits Report
               </Link>
               <a className="secondary-btn" href="#sample-report">
                 View Sample Report
               </a>
             </div>
+
+            <div className="trust-strip">
+              <span>100% Free Assessment</span>
+              <span>2-Minute Completion Time</span>
+              <span>Personalized Benefits Report</span>
+            </div>
           </div>
 
           <div className="score-preview">
-            <p>Sample Benefits Opportunity Score</p>
-            <div className="score-number">92</div>
-            <span>/100</span>
+            <p>Veterans Assessed</p>
+            <div className="score-number">{leadCount}</div>
+            <span>and counting</span>
           </div>
         </section>
       </header>
@@ -55,6 +76,32 @@ function LandingPage() {
           <div className="feature-card">
             <h3>State Benefits</h3>
             <p>Identify state-level programs like tuition, DMV, and tax benefits.</p>
+          </div>
+        </section>
+
+        <section id="sample-report" className="sample-report">
+          <h2>Sample Report Preview</h2>
+
+          <div className="sample-report-grid">
+            <div className="sample-card highlight-card">
+              <p>Benefits Opportunity Score</p>
+              <h1>92/100</h1>
+            </div>
+
+            <div className="sample-card">
+              <h3>Estimated Compensation</h3>
+              <p><strong>$2,297/month</strong></p>
+              <p>Educational estimate based on rating and dependents.</p>
+            </div>
+
+            <div className="sample-card">
+              <h3>Top Opportunities</h3>
+              <ul>
+                <li>VR&E</li>
+                <li>State Benefits</li>
+                <li>GI Bill Optimization</li>
+              </ul>
+            </div>
           </div>
         </section>
 
@@ -82,31 +129,32 @@ function LandingPage() {
           </div>
         </section>
 
-        <section id="sample-report" className="sample-report">
-          <h2>Sample Report Preview</h2>
-          <div className="sample-card">
-            <h3>Estimated VA Disability Compensation</h3>
-            <p><strong>Rating used:</strong> 80%</p>
-            <p><strong>Estimated monthly value:</strong> $2,297.15</p>
-            <p><strong>Priority:</strong> High</p>
-          </div>
-        </section>
-
         <section className="faq">
           <h2>FAQ</h2>
+
           <h3>Is this free?</h3>
           <p>Yes. The basic assessment is free.</p>
 
           <h3>Is this official VA advice?</h3>
-          <p>No. This is educational only and not legal, financial, medical, or VA-accredited advice.</p>
+          <p>
+            No. This is educational only and not legal, financial, medical, or
+            VA-accredited advice.
+          </p>
 
           <h3>How long does it take?</h3>
           <p>About two minutes.</p>
+
+          <Link className="primary-btn bottom-cta" to="/app">
+            Start My Free Assessment
+          </Link>
         </section>
       </main>
 
       <footer className="landing-footer">
-        <p>Educational estimates only. Verify benefits with VA.gov, SSA, state agencies, or an accredited representative.</p>
+        <p>
+          Educational estimates only. Verify benefits with VA.gov, SSA, state
+          agencies, or an accredited representative.
+        </p>
       </footer>
     </div>
   );
