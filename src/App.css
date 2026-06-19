@@ -427,3 +427,46 @@ button {
     grid-template-columns: 1fr;
   }
 }
+.report-area {
+  max-width: 720px;
+  margin: 18px auto 0;
+}
+
+.report-area .feature-card {
+  text-align: left;
+  padding: 28px;
+}
+
+.report-area .feature-card h2,
+.report-area .feature-card h3 {
+  text-align: center;
+  color: #0f172a;
+}
+
+.report-area .feature-card p,
+.report-area .feature-card li {
+  color: #0f172a;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.large-score {
+  display: block;
+  text-align: center;
+  font-size: 56px;
+  font-weight: 900;
+  color: #123f73;
+  line-height: 1.1;
+  margin: 10px 0;
+}
+
+.report-area ol,
+.report-area ul {
+  max-width: 520px;
+  margin: 0 auto;
+  padding-left: 24px;
+}
+
+.report-area strong {
+  color: #0f172a;
+}
