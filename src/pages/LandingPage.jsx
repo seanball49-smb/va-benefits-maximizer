@@ -15,178 +15,220 @@ function LandingPage() {
   }, []);
 
   return (
-    <div className="landing-page">
-      <header className="landing-hero">
-        <nav className="landing-nav">
-          <div className="brand">VA Benefits Maximizer</div>
-          <div className="nav-links">
-            <Link to="/app">Start Assessment</Link>
+    <div className="site-page">
+      <header className="modern-hero">
+        <nav className="modern-nav">
+          <Link to="/" className="modern-logo">
+          <span className="logo-mark">VA</span>
+            <span>VA Benefits Maximizer</span>
+          </Link>
+
+          <div className="modern-nav-links">
+            <a href="#how-it-works">How it works</a>
+            <a href="#sample-report">Sample report</a>
+            <Link className="nav-cta" to="/app">
+              Start free
+            </Link>
           </div>
         </nav>
 
-        <section className="hero-content">
-          <div>
-            <p className="eyebrow">Veteran Benefits Planning Tool</p>
+        <section className="hero-shell">
+          <div className="hero-copy">
+            <div className="pill">Free veteran benefits assessment</div>
 
-            <h1>Discover Veteran Benefits You May Be Missing</h1>
+            <h1>
+              Find the VA benefits you may be leaving on the table.
+            </h1>
 
-            <p className="hero-subtitle">
-              Get a free personalized benefits assessment covering VA disability,
-              GI Bill, VR&E, state programs, dependent benefits, and SSDI
-              considerations.
+            <p>
+              Get a personalized benefits snapshot covering VA disability,
+              dependents, GI Bill, VR&E, SSDI considerations, and state veteran
+              programs in about two minutes.
             </p>
 
-            <div className="hero-actions">
-              <Link className="primary-btn" to="/app">
+            <div className="hero-buttons">
+              <Link className="btn btn-primary" to="/app">
                 Start My Free Assessment
               </Link>
 
-              <a className="secondary-btn" href="#sample-report">
+              <a className="btn btn-secondary" href="#sample-report">
                 View Sample Report
               </a>
             </div>
 
-            <div className="trust-strip">
-              <span>100% Free Assessment</span>
-              <span>2-Minute Completion Time</span>
-              <span>Personalized Benefits Report</span>
-            </div>
-
-            <div className="mini-proof">
+            <div className="hero-proof">
               <div>
-                <strong>Free</strong>
+                <strong>{leadCount}</strong>
+                <span>Veterans assessed</span>
+              </div>
+
+              <div>
+                <strong>2 min</strong>
+                <span>Average completion</span>
+              </div>
+
+              <div>
+                <strong>$0</strong>
                 <span>No signup required</span>
-              </div>
-
-              <div>
-                <strong>2 Minutes</strong>
-                <span>Fast assessment</span>
-              </div>
-
-              <div>
-                <strong>Personalized</strong>
-                <span>Custom recommendations</span>
               </div>
             </div>
           </div>
 
-          <div className="score-preview">
-            <p>Veterans Assessed</p>
-            <div className="score-number">{leadCount}</div>
-            <span>and counting</span>
+          <div className="hero-dashboard">
+            <div className="floating-card score-card">
+              <span>Benefits Opportunity Score</span>
+              <strong>92</strong>
+              <small>/100</small>
+            </div>
+
+            <div className="floating-card">
+              <h3>Top Opportunities</h3>
+              <ul>
+                <li>VR&E review</li>
+                <li>State benefits</li>
+                <li>Dependent compensation</li>
+              </ul>
+            </div>
+
+            <div className="floating-card compensation-card">
+              <span>Estimated Monthly Value</span>
+              <strong>$2,297</strong>
+              <small>Educational estimate</small>
+            </div>
           </div>
         </section>
       </header>
 
-      <main className="landing-main">
-        <section className="feature-grid">
-          <div className="feature-card">
-            <h3>VA Disability</h3>
-            <p>Estimate compensation opportunities and dependent add-ons.</p>
-          </div>
-
-          <div className="feature-card">
-            <h3>Education Benefits</h3>
-            <p>Compare GI Bill and VR&E considerations before using benefits.</p>
-          </div>
-
-          <div className="feature-card">
-            <h3>State Benefits</h3>
+      <main>
+        <section className="section feature-section">
+          <div className="section-heading">
+            <span className="pill light">What it checks</span>
+            <h2>One assessment. Multiple benefit categories.</h2>
             <p>
-              Identify state-level programs like tuition, DMV, and tax benefits.
+              The app helps veterans identify benefit areas worth reviewing
+              before they miss deadlines, leave money unused, or burn education
+              benefits unnecessarily.
             </p>
           </div>
-        </section>
 
-        <section className="what-you-learn">
-          <h2>What You'll Learn</h2>
-
-          <ul>
-            <li>Estimated VA compensation opportunities</li>
-            <li>Potential dependent benefits</li>
-            <li>GI Bill and VR&E considerations</li>
-            <li>State-level veteran programs</li>
-            <li>Suggested next steps</li>
-          </ul>
-        </section>
-
-        <section id="sample-report" className="sample-report">
-          <h2>Sample Report Preview</h2>
-
-          <div className="sample-report-grid">
-            <div className="sample-card highlight-card">
-              <p>Benefits Opportunity Score</p>
-              <h1>92/100</h1>
-            </div>
-
-            <div className="sample-card">
-              <h3>Estimated Compensation</h3>
+          <div className="modern-grid three">
+            <div className="modern-card">
+              <div className="icon-bubble">01</div>
+              <h3>VA Disability</h3>
               <p>
-                <strong>$2,297/month</strong>
+                Estimate compensation opportunities, dependent add-ons, and
+                rating-based next steps.
               </p>
-              <p>Educational estimate based on rating and dependents.</p>
             </div>
 
-            <div className="sample-card">
-              <h3>Top Opportunities</h3>
-              <ul>
-                <li>VR&E</li>
-                <li>State Benefits</li>
-                <li>GI Bill Optimization</li>
-              </ul>
+            <div className="modern-card">
+              <div className="icon-bubble">02</div>
+              <h3>Education Benefits</h3>
+              <p>
+                Review GI Bill and VR&E considerations before choosing a school
+                or degree path.
+              </p>
+            </div>
+
+            <div className="modern-card">
+              <div className="icon-bubble">03</div>
+              <h3>State Programs</h3>
+              <p>
+                Surface state-level tax, tuition, DMV, and veteran assistance
+                programs.
+              </p>
             </div>
           </div>
         </section>
 
-        <section className="how-it-works">
-          <h2>How It Works</h2>
-
-          <div className="steps-grid">
+        <section id="sample-report" className="section sample-section">
+          <div className="sample-panel">
             <div>
+              <span className="pill light">Sample output</span>
+              <h2>A clean benefits report you can actually use.</h2>
+              <p>
+                Each report gives a score, estimated compensation, ranked
+                opportunities, state benefits, and recommended action steps.
+              </p>
+
+              <Link className="btn btn-primary" to="/app">
+                Generate My Report
+              </Link>
+            </div>
+
+            <div className="sample-report-card">
+              <div className="report-topline">
+                <span>Opportunity Score</span>
+                <strong>92/100</strong>
+              </div>
+
+              <div className="report-line">
+                <span>VA Disability</span>
+                <strong>High</strong>
+              </div>
+
+              <div className="report-line">
+                <span>VR&E</span>
+                <strong>High</strong>
+              </div>
+
+              <div className="report-line">
+                <span>State Benefits</span>
+                <strong>Review</strong>
+              </div>
+
+              <div className="report-line">
+                <span>Estimated Monthly Value</span>
+                <strong>$2,297</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="how-it-works" className="section">
+          <div className="section-heading">
+            <span className="pill light">How it works</span>
+            <h2>Simple enough to finish during a coffee break.</h2>
+          </div>
+
+          <div className="modern-grid three">
+            <div className="step-card">
               <span>1</span>
-              <h3>Complete Assessment</h3>
-              <p>Answer a short questionnaire in about two minutes.</p>
+              <h3>Answer questions</h3>
+              <p>Enter your rating, dependents, state, education status, and goals.</p>
             </div>
 
-            <div>
+            <div className="step-card">
               <span>2</span>
-              <h3>Generate Report</h3>
-              <p>Receive a personalized benefits opportunity summary.</p>
+              <h3>Generate report</h3>
+              <p>Receive a personalized benefits opportunity summary instantly.</p>
             </div>
 
-            <div>
+            <div className="step-card">
               <span>3</span>
-              <h3>Take Action</h3>
-              <p>Use the recommended next steps to verify and pursue benefits.</p>
+              <h3>Take action</h3>
+              <p>Use the action plan to verify benefits with official sources.</p>
             </div>
           </div>
         </section>
 
-        <section className="faq">
-          <h2>FAQ</h2>
-
-          <h3>Is this free?</h3>
-          <p>Yes. The basic assessment is free.</p>
-
-          <h3>Is this official VA advice?</h3>
+        <section className="section cta-section">
+          <h2>Ready to see what you may qualify for?</h2>
           <p>
-            No. This is educational only and not legal, financial, medical, or
-            VA-accredited advice.
+            The assessment is free, fast, and educational. No account required.
           </p>
 
-          <h3>How long does it take?</h3>
-          <p>About two minutes.</p>
-
-          <Link className="primary-btn bottom-cta" to="/app">
+          <Link className="btn btn-primary" to="/app">
             Start My Free Assessment
           </Link>
         </section>
       </main>
 
-      <footer className="landing-footer">
+      <footer className="modern-footer">
         <p>
-          Educational estimates only. Verify benefits with VA.gov, SSA, state
-          agencies, or an accredited representative.
+          Educational estimates only. Not legal, financial, medical, or
+          VA-accredited advice. Verify benefits with VA.gov, SSA, state agencies,
+          or an accredited representative.
         </p>
       </footer>
     </div>
