@@ -19,7 +19,7 @@ function LandingPage() {
       <header className="modern-hero">
         <nav className="modern-nav">
           <Link to="/" className="modern-logo">
-          <span className="logo-mark">VA</span>
+            <span className="logo-mark">VA</span>
             <span>VA Benefits Maximizer</span>
           </Link>
 
@@ -36,9 +36,7 @@ function LandingPage() {
           <div className="hero-copy">
             <div className="pill">Free veteran benefits assessment</div>
 
-            <h1>
-              Find the VA benefits you may be leaving on the table.
-            </h1>
+            <h1>Find the VA benefits you may be leaving on the table.</h1>
 
             <p>
               Get a personalized benefits snapshot covering VA disability,
@@ -74,26 +72,76 @@ function LandingPage() {
             </div>
           </div>
 
-          <div className="hero-dashboard">
-            <div className="floating-card score-card">
-              <span>Benefits Opportunity Score</span>
-              <strong>92</strong>
-              <small>/100</small>
+          <div className="hero-report-preview">
+            <div className="preview-top">
+              <div>
+                <span>Sample Report</span>
+                <h3>Benefits Snapshot</h3>
+              </div>
+
+              <div className="preview-badge">Educational</div>
             </div>
 
-            <div className="floating-card">
-              <h3>Top Opportunities</h3>
-              <ul>
-                <li>VR&E review</li>
-                <li>State benefits</li>
-                <li>Dependent compensation</li>
+            <div className="preview-score-block">
+              <div>
+                <span>Opportunity Score</span>
+                <strong>92</strong>
+                <small>/100</small>
+              </div>
+
+              <div className="score-ring">
+                <span>High</span>
+              </div>
+            </div>
+
+            <div className="preview-metrics">
+              <div>
+                <span>Monthly Estimate</span>
+                <strong>$2,557</strong>
+              </div>
+
+              <div>
+                <span>Annual Estimate</span>
+                <strong>$30,688</strong>
+              </div>
+            </div>
+
+            <div className="preview-section">
+              <div className="preview-section-header">
+                <h4>Top Opportunities</h4>
+                <span>3 found</span>
+              </div>
+
+              <ul className="modern-checklist">
+                <li>
+                  <span>✓</span>
+                  <div>
+                    <strong>VR&E Review</strong>
+                    <small>Explore retraining before using more GI Bill.</small>
+                  </div>
+                </li>
+
+                <li>
+                  <span>✓</span>
+                  <div>
+                    <strong>State Benefits</strong>
+                    <small>Review tax, tuition, DMV, and state programs.</small>
+                  </div>
+                </li>
+
+                <li>
+                  <span>✓</span>
+                  <div>
+                    <strong>Dependent Add-On</strong>
+                    <small>Confirm dependents are added to VA.gov.</small>
+                  </div>
+                </li>
               </ul>
             </div>
 
-            <div className="floating-card compensation-card">
-              <span>Estimated Monthly Value</span>
-              <strong>$2,297</strong>
-              <small>Educational estimate</small>
+            <div className="next-action-card">
+              <span>Recommended Next Action</span>
+              <strong>Verify dependents and compare VR&E before using GI Bill.</strong>
             </div>
           </div>
         </section>
@@ -179,7 +227,7 @@ function LandingPage() {
 
               <div className="report-line">
                 <span>Estimated Monthly Value</span>
-                <strong>$2,297</strong>
+                <strong>$2,557</strong>
               </div>
             </div>
           </div>
@@ -195,19 +243,26 @@ function LandingPage() {
             <div className="step-card">
               <span>1</span>
               <h3>Answer questions</h3>
-              <p>Enter your rating, dependents, state, education status, and goals.</p>
+              <p>
+                Enter your rating, dependents, state, education status, and
+                goals.
+              </p>
             </div>
 
             <div className="step-card">
               <span>2</span>
               <h3>Generate report</h3>
-              <p>Receive a personalized benefits opportunity summary instantly.</p>
+              <p>
+                Receive a personalized benefits opportunity summary instantly.
+              </p>
             </div>
 
             <div className="step-card">
               <span>3</span>
               <h3>Take action</h3>
-              <p>Use the action plan to verify benefits with official sources.</p>
+              <p>
+                Use the action plan to verify benefits with official sources.
+              </p>
             </div>
           </div>
         </section>
