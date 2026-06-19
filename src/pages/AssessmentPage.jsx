@@ -18,6 +18,8 @@ const vaMonthlyBase = {
   100: 3938.57,
 };
 
+const totalSteps = 5;
+
 function currency(value) {
   return value.toLocaleString("en-US", {
     style: "currency",
@@ -25,12 +27,9 @@ function currency(value) {
   });
 }
 
-function normalizeState(value) {
-  return value.trim().toLowerCase();
-}
-
 function AssessmentPage() {
   const reportRef = useRef(null);
+  const [step, setStep] = useState(1);
 
   const [form, setForm] = useState({
     first_name: "",
@@ -49,9 +48,14 @@ function AssessmentPage() {
   const [results, setResults] = useState(null);
   const [stateBenefitRows, setStateBenefitRows] = useState([]);
 
+  const updateForm = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const progressPercent = Math.round((step / totalSteps) * 100);
+
   const fetchStateBenefits = async (stateName) => {
     const cleanedState = stateName.trim();
-
     if (!cleanedState) return [];
 
     const { data, error } = await supabase
@@ -147,8 +151,36 @@ function AssessmentPage() {
     };
   };
 
+  const canContinue = () => {
+    if (step === 1) return form.first_name && form.email;
+    if (step === 2) return form.state && form.service_branch;
+    if (step === 3) return form.disability_rating !== "" && form.dependents !== "";
+    if (step === 4) return form.gi_bill_percent !== "";
+    return true;
+  };
+
+  const nextStep = () => {
+    if (!canContinue()) {
+      setMessage("Please complete the required fields before continuing.");
+      return;
+    }
+
+    setMessage("");
+    setStep((prev) => Math.min(totalSteps, prev + 1));
+  };
+
+  const previousStep = () => {
+    setMessage("");
+    setStep((prev) => Math.max(1, prev - 1));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!canContinue()) {
+      setMessage("Please complete the required fields before generating your report.");
+      return;
+    }
 
     setMessage("Generating report...");
 
@@ -201,183 +233,248 @@ function AssessmentPage() {
   };
 
   return (
-    <div className="landing-page">
-      <header className="landing-hero">
-        <nav className="landing-nav">
-          <div className="brand">VA Benefits Maximizer</div>
-          <div className="nav-links">
+    <div className="site-page">
+      <header className="app-header">
+        <nav className="modern-nav">
+          <Link to="/" className="modern-logo">
+            <span className="logo-mark">VA</span>
+            <span>VA Benefits Maximizer</span>
+          </Link>
+
+          <div className="modern-nav-links">
             <Link to="/">Home</Link>
-            <Link to="/admin">Admin</Link>
+            <Link className="nav-cta" to="/app">
+              Assessment
+            </Link>
           </div>
         </nav>
 
-        <section className="hero-content">
+        <div className="app-hero">
           <div>
-            <p className="eyebrow">Free Benefits Assessment</p>
-            <h1>Generate Your Personalized Benefits Report</h1>
-            <p className="hero-subtitle">
-              Enter your information below to estimate benefit opportunities
-              across VA disability, GI Bill, VR&E, state benefits, dependents,
-              and SSDI considerations.
+            <div className="pill">Free benefits assessment</div>
+            <h1>Generate your personalized benefits report.</h1>
+            <p>
+              Answer a few guided questions and get an educational benefits
+              snapshot with estimated compensation, ranked opportunities, state
+              benefits, and next steps.
             </p>
           </div>
 
-          <div className="score-preview">
-            <p>Educational Estimate</p>
-            <div className="score-number">Free</div>
-            <span>2-minute assessment</span>
+          <div className="app-hero-card">
+            <span>Current step</span>
+            <strong>{step} of {totalSteps}</strong>
+            <div className="progress-track">
+              <div
+                className="progress-fill"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
           </div>
-        </section>
+        </div>
       </header>
 
-      <main className="landing-main">
-        <div className="assessment-layout">
-          <section className="feature-card">
-            <h2>Benefits Assessment</h2>
-            <p>
-              This tool is educational only and is not legal, financial,
-              medical, or VA-accredited advice.
-            </p>
+      <main className="app-main">
+        <div className="assessment-modern-layout">
+          <section className="wizard-card">
+            <div className="wizard-top">
+              <span>Step {step} of {totalSteps}</span>
+              <strong>{progressPercent}% complete</strong>
+            </div>
+
+            <div className="progress-track">
+              <div
+                className="progress-fill"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
 
             <form onSubmit={handleSubmit}>
-              <label>First Name</label>
-              <input
-                type="text"
-                value={form.first_name}
-                onChange={(e) =>
-                  setForm({ ...form, first_name: e.target.value })
-                }
-              />
+              {step === 1 && (
+                <div className="wizard-step">
+                  <h2>Basic information</h2>
+                  <p>We’ll use this to personalize your report and save the lead.</p>
 
-              <label>Email Address</label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-              />
+                  <label>First Name</label>
+                  <input
+                    type="text"
+                    value={form.first_name}
+                    onChange={(e) => updateForm("first_name", e.target.value)}
+                    placeholder="Sean"
+                  />
 
-              <label>State</label>
-              <input
-                type="text"
-                placeholder="California, Texas, Florida..."
-                value={form.state}
-                onChange={(e) => setForm({ ...form, state: e.target.value })}
-              />
+                  <label>Email Address</label>
+                  <input
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => updateForm("email", e.target.value)}
+                    placeholder="you@example.com"
+                  />
+                </div>
+              )}
 
-              <label>Service Branch</label>
-              <select
-                value={form.service_branch}
-                onChange={(e) =>
-                  setForm({ ...form, service_branch: e.target.value })
-                }
-              >
-                <option value="">Select Branch</option>
-                <option>Air Force</option>
-                <option>Army</option>
-                <option>Navy</option>
-                <option>Marine Corps</option>
-                <option>Coast Guard</option>
-                <option>Space Force</option>
-              </select>
+              {step === 2 && (
+                <div className="wizard-step">
+                  <h2>Service profile</h2>
+                  <p>This helps match your report to state and service-related benefits.</p>
 
-              <label>VA Disability Rating (%)</label>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                step="10"
-                value={form.disability_rating}
-                onChange={(e) =>
-                  setForm({ ...form, disability_rating: e.target.value })
-                }
-              />
+                  <label>State</label>
+                  <input
+                    type="text"
+                    value={form.state}
+                    onChange={(e) => updateForm("state", e.target.value)}
+                    placeholder="California"
+                  />
 
-              <label>GI Bill Percentage</label>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={form.gi_bill_percent}
-                onChange={(e) =>
-                  setForm({ ...form, gi_bill_percent: e.target.value })
-                }
-              />
+                  <label>Service Branch</label>
+                  <select
+                    value={form.service_branch}
+                    onChange={(e) => updateForm("service_branch", e.target.value)}
+                  >
+                    <option value="">Select Branch</option>
+                    <option>Air Force</option>
+                    <option>Army</option>
+                    <option>Navy</option>
+                    <option>Marine Corps</option>
+                    <option>Coast Guard</option>
+                    <option>Space Force</option>
+                  </select>
+                </div>
+              )}
 
-              <label>Number of Dependents</label>
-              <input
-                type="number"
-                min="0"
-                value={form.dependents}
-                onChange={(e) =>
-                  setForm({ ...form, dependents: e.target.value })
-                }
-              />
+              {step === 3 && (
+                <div className="wizard-step">
+                  <h2>VA disability profile</h2>
+                  <p>Enter your current combined rating and dependent count.</p>
 
-              <label className="checkbox-line">
-                <input
-                  type="checkbox"
-                  checked={form.employed}
-                  onChange={(e) =>
-                    setForm({ ...form, employed: e.target.checked })
-                  }
-                />
-                Currently Employed
-              </label>
+                  <label>VA Disability Rating (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="10"
+                    value={form.disability_rating}
+                    onChange={(e) => updateForm("disability_rating", e.target.value)}
+                    placeholder="80"
+                  />
 
-              <label className="checkbox-line">
-                <input
-                  type="checkbox"
-                  checked={form.interested_in_vre}
-                  onChange={(e) =>
-                    setForm({ ...form, interested_in_vre: e.target.checked })
-                  }
-                />
-                Interested in VR&E
-              </label>
+                  <label>Number of Dependents</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={form.dependents}
+                    onChange={(e) => updateForm("dependents", e.target.value)}
+                    placeholder="3"
+                  />
+                </div>
+              )}
 
-              <label className="checkbox-line">
-                <input
-                  type="checkbox"
-                  checked={form.interested_in_ssdi}
-                  onChange={(e) =>
-                    setForm({ ...form, interested_in_ssdi: e.target.checked })
-                  }
-                />
-                Interested in SSDI
-              </label>
+              {step === 4 && (
+                <div className="wizard-step">
+                  <h2>Education benefits</h2>
+                  <p>Compare GI Bill usage against VR&E before committing benefits.</p>
 
-              <button className="primary-btn" type="submit">
-                Generate Benefits Report
-              </button>
+                  <label>GI Bill Percentage</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={form.gi_bill_percent}
+                    onChange={(e) => updateForm("gi_bill_percent", e.target.value)}
+                    placeholder="90"
+                  />
+
+                  <label className="checkbox-line">
+                    <input
+                      type="checkbox"
+                      checked={form.interested_in_vre}
+                      onChange={(e) => updateForm("interested_in_vre", e.target.checked)}
+                    />
+                    Interested in VR&E
+                  </label>
+                </div>
+              )}
+
+              {step === 5 && (
+                <div className="wizard-step">
+                  <h2>Work and SSDI considerations</h2>
+                  <p>This helps flag whether SSDI should be reviewed carefully.</p>
+
+                  <label className="checkbox-line">
+                    <input
+                      type="checkbox"
+                      checked={form.employed}
+                      onChange={(e) => updateForm("employed", e.target.checked)}
+                    />
+                    Currently Employed
+                  </label>
+
+                  <label className="checkbox-line">
+                    <input
+                      type="checkbox"
+                      checked={form.interested_in_ssdi}
+                      onChange={(e) => updateForm("interested_in_ssdi", e.target.checked)}
+                    />
+                    Interested in SSDI
+                  </label>
+                </div>
+              )}
+
+              {message && <div className="form-message">{message}</div>}
+
+              <div className="wizard-actions">
+                {step > 1 && (
+                  <button type="button" className="btn btn-secondary" onClick={previousStep}>
+                    Back
+                  </button>
+                )}
+
+                {step < totalSteps && (
+                  <button type="button" className="btn btn-primary" onClick={nextStep}>
+                    Continue
+                  </button>
+                )}
+
+                {step === totalSteps && (
+                  <button type="submit" className="btn btn-primary">
+                    Generate Benefits Report
+                  </button>
+                )}
+              </div>
             </form>
-
-            {message && <h3>{message}</h3>}
           </section>
 
-          <section>
+          <section className="results-panel">
             {!results && (
-              <div className="feature-card">
-                <h2>Your report will appear here</h2>
+              <div className="empty-report-card">
+                <div className="pill light">Report preview</div>
+                <h2>Your report will appear here.</h2>
                 <p>
-                  After submission, this area will show your opportunity score,
-                  estimated compensation, ranked benefit areas, state benefits,
-                  and recommended next steps.
+                  Once generated, you’ll see your opportunity score, estimated
+                  compensation, ranked benefits, state-specific benefits, and
+                  recommended next actions.
                 </p>
+
+                <div className="preview-skeleton">
+                  <div />
+                  <div />
+                  <div />
+                </div>
               </div>
             )}
 
             {results && (
               <>
-                <button className="primary-btn" onClick={downloadPDF}>
+                <button className="btn btn-primary" onClick={downloadPDF}>
                   Download PDF Report
                 </button>
 
-                <div ref={reportRef} className="report-area">
-                  <div className="feature-card">
+                <div ref={reportRef} className="report-dashboard">
+                  <div className="report-header-card">
+                    <span>Personalized Benefits Report</span>
                     <h2>
                       {form.first_name
-                        ? `${form.first_name}'s Estimated Benefits Report`
-                        : "Your Estimated Benefits Report"}
+                        ? `${form.first_name}'s Benefits Snapshot`
+                        : "Your Benefits Snapshot"}
                     </h2>
                     <p>
                       Educational estimate only. Verify official amounts and
@@ -386,98 +483,77 @@ function AssessmentPage() {
                     </p>
                   </div>
 
-                  <div className="feature-card">
-                    <h3>Benefits Opportunity Score</h3>
-                    <div className="large-score">{results.score}/100</div>
-                    <p>
-                      This score estimates how many benefit areas may be worth
-                      reviewing based on the information entered.
-                    </p>
+                  <div className="report-stat-grid">
+                    <div>
+                      <span>Opportunity Score</span>
+                      <strong>{results.score}/100</strong>
+                    </div>
+
+                    <div>
+                      <span>Monthly Estimate</span>
+                      <strong>{currency(results.estimatedMonthly)}</strong>
+                    </div>
+
+                    <div>
+                      <span>Annual Estimate</span>
+                      <strong>{currency(results.estimatedAnnual)}</strong>
+                    </div>
+
+                    <div>
+                      <span>Rating Used</span>
+                      <strong>{results.roundedRating}%</strong>
+                    </div>
                   </div>
 
-                  <div className="feature-card">
-                    <h3>Estimated VA Disability Compensation</h3>
-                    <p>
-                      <strong>Rating used:</strong> {results.roundedRating}%
-                    </p>
-                    <p>
-                      <strong>Estimated monthly value:</strong>{" "}
-                      {currency(results.estimatedMonthly)}
-                    </p>
-                    <p>
-                      <strong>Estimated annual value:</strong>{" "}
-                      {currency(results.estimatedAnnual)}
-                    </p>
-                    <p>
-                      <strong>Priority:</strong> {results.disabilityPriority}
-                    </p>
-                  </div>
-
-                  <div className="feature-card">
+                  <div className="report-section-card">
                     <h3>Ranked Benefit Opportunities</h3>
-                    <ol>
+                    <div className="opportunity-list">
                       {results.rankedBenefits.map((benefit) => (
-                        <li key={benefit.name}>
-                          <strong>{benefit.name}</strong> — {benefit.priority}
-                        </li>
+                        <div key={benefit.name}>
+                          <span>{benefit.name}</span>
+                          <strong>{benefit.priority}</strong>
+                        </div>
                       ))}
-                    </ol>
+                    </div>
                   </div>
 
-                  <div className="feature-card">
+                  <div className="report-section-card">
                     <h3>State-Specific Benefits</h3>
                     <p>
-                      <strong>State entered:</strong>{" "}
-                      {form.state || "Not provided"}
+                      <strong>State entered:</strong> {form.state || "Not provided"}
                     </p>
 
                     {stateBenefitRows.length > 0 ? (
-                      <ul>
+                      <div className="state-benefit-list">
                         {stateBenefitRows.map((benefit) => (
-                          <li key={benefit.benefit_name}>
-                            <strong>{benefit.benefit_name}</strong>
-                            {benefit.description && (
-                              <p>{benefit.description}</p>
-                            )}
+                          <div key={benefit.benefit_name}>
+                            <h4>{benefit.benefit_name}</h4>
+                            {benefit.description && <p>{benefit.description}</p>}
                             {benefit.link && (
-                              <a
-                                href={benefit.link}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
+                              <a href={benefit.link} target="_blank" rel="noreferrer">
                                 Learn more
                               </a>
                             )}
-                          </li>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     ) : (
                       <p>
-                        State-specific benefits are not loaded for this state
-                        yet. Check your state veterans affairs website.
+                        State-specific benefits are not loaded for this state yet.
+                        Check your state veterans affairs website.
                       </p>
                     )}
                   </div>
 
-                  <div className="feature-card">
+                  <div className="report-section-card">
                     <h3>Recommended Action Plan</h3>
                     <ol>
                       <li>Verify your current combined rating on VA.gov.</li>
-                      <li>
-                        Confirm all dependents are added to your VA profile.
-                      </li>
-                      <li>
-                        Compare VR&E before using more GI Bill entitlement.
-                      </li>
+                      <li>Confirm all dependents are added to your VA profile.</li>
+                      <li>Compare VR&E before using more GI Bill entitlement.</li>
                       <li>Review state-specific veteran benefits.</li>
-                      <li>
-                        Download your benefits letters and rating decision
-                        letters.
-                      </li>
-                      <li>
-                        Talk to a VSO or accredited representative before
-                        complex claims.
-                      </li>
+                      <li>Download your benefits letters and rating decision letters.</li>
+                      <li>Talk to a VSO or accredited representative before complex claims.</li>
                     </ol>
                   </div>
                 </div>
